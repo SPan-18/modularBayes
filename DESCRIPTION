@@ -1,0 +1,30 @@
+Package: modularLM
+Type: Package
+Version: 0.0.1
+Title: Bayesian Modular Inference for a Linear Model
+Authors@R:
+    person("Soumyakanti", "Pan", role = c("aut", "cre"),
+    email = "span18@ucla.edu", comment = c(ORCID = "0009-0005-9889-7112"))
+Description: Implements modular Bayesian inference for linear regression when
+    some predictors are themselves outputs of an earlier Bayesian analysis.
+    Instead of plugging in point estimates, this approach borrows posterior
+    samples of the predictors and, for each such sample, fits the current
+    response model by sampling the regression coefficients from the conditional
+    posterior distribution. This ensures proper propagation of uncertainty from
+    the previous analysis to the current one, while avoiding unwanted feedback
+    between the two models. The method can be viewed as a cut model (Plummer,
+    2014 <doi:10.1007/s11222-014-9503-z>), which severs feedback in the
+    underlying graphical model. Such modular strategies are useful for post-hoc
+    analyses or combining evidence from multiple data sources; see Bayarri et
+    al. (2009) <doi:10.1214/09-BA404> and Jacob et al. (2017)
+    <doi:10.48550/arXiv.1708.08719>.
+NeedsCompilation: no
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Depends:
+    R (>= 3.5)
+Language: en-US
