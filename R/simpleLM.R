@@ -7,6 +7,26 @@
 #' @param ... Additional arguments (not currently used).
 #' @return An object of class \code{fitLM} containing the fitted model and
 #' posterior samples.
+#' @examples
+#' set.seed(1729)
+#' n <- 100
+#' beta0 <- c(5, -2, 1, 0)
+#' sd0 <- 1
+#' wts0 <- rep(1, n)
+#'
+#' p <- length(beta0)
+#' X <- cbind(rep(1, n), sapply(1:(p - 1), function(x) rnorm(n)))
+#' mu <- X %*% beta0
+#' y <- rnorm(n, mu, sd0 / sqrt(wts0))
+#' dat <- cbind(y, X[, -1])
+#' dat <- as.data.frame(dat)
+#' names(dat) <- c("y", paste("x", 1:(p - 1), sep = ""))
+#' mod1 <- lm(y ~ x1 * x2, data = dat, weights = wts0)
+#' mod2 <- simpleLM(y ~ x1 * x2, data = dat)
+#'
+#' mod1.summary <- summary(mod1)
+#' mod2.summary <- credibleInterval(mod2)
+#' print(mod2.summary)
 #' @export
 simpleLM <- function(formula, data, wts, priors, n.samples = 1000, ...){
 

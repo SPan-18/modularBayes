@@ -1,0 +1,107 @@
+---
+title: "modularBayes: Modular Bayesian inference for a linear model"
+output:
+  rmarkdown::html_vignette:
+    mathjax: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+vignette: >
+  %\VignetteIndexEntry{modularBayes: Modular Bayesian inference for a linear model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+header-includes:
+  - \def\T{{ \scriptstyle \top }}
+  - \newcommand{\given}{\mid}
+  - \newcommand{\N}{\mathsf{N}}
+  - \newcommand{\IG}{\mathsf{IG}}
+  - \newcommand{\diag}{\mathrm{diag}}
+link-citations: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette illustrates the usage of the `modularBayes` package for fitting
+modular Bayesian linear models. The package allows users to incorporate
+posterior samples from external Bayesian analyses (modular components) into a
+unified regression framework.
+
+```{r}
+library(modularBayes)
+```
+
+## Example 1
+
+Here I demonstrate a simple simulation experiment.
+
+```{r}
+set.seed(1729)
+
+n <- 100
+beta0 <- c(5, -2, 1, 4)
+sd0 <- 1
+wts0 <- rep(1, n)
+```
+
+We simulate our responses from a linear model:
+$$
+y \sim \N (X \beta_0, \sigma^2 W) \;,
+$$
+where $X$ = `[1:x1:x2:x3]` is $n \times p$ matrix of predictors including the intercept, $\beta_0$ is $p \times 1$ vector of slopes, and $W = \diag(1/w)$ is a $n \times n$ diagonal matrix of inverse survey weights $w$. Here, we have talen $p = 4$. We choose all the weights as 1 for this example.
+
+```{r}
+p <- length(beta0)
+X <- cbind(rep(1, n), sapply(1:(p - 1), function(x) rnorm(n)))
+mu <- X %*% beta0
+y <- rnorm(n, mu, sd0 / sqrt(wts0))
+dat <- cbind(y, X[, -1])
+dat <- as.data.frame(dat)
+names(dat) <- c("y", paste("x", 1:(p - 1), sep = ""))
+```
+
+Here is a snippet of the data:
+```{r}
+head(dat)
+```
+
+Now, suppose `x3` is a variable that we have not observed right away. Instead, we have information on `x3` from running a different Bayesian analysis previously. Hence, we have posterior samples of `x3`. We simulate 1000 synthetic posterior samples of `x3` by adding noise to the corresponding true values. We call this quantity `modular.x3` which essentially mimics posterior samples of `x3`, obtained from a different analysis.
+
+```{r}
+nS <- 1000
+modular.x3 <- matrix(rnorm(length(dat$x3) * nS, mean = rep(dat$x3, nS), sd = 0.1),
+                     nrow = length(dat$x3), ncol = nS)
+```
+
+### Fit a modular linear model
+
+We use the function `modularLM()` to fit a modular Bayesian model. The non-modular component of the model is given by a regular formula `y ~ x1 + x2`. The modular variables are passed through a list tagged by the variable names via the argument `post.var`. For example, the following code runs the regression `y ~ x1 + x2 + x3` using posterior samples of `x3`.
+
+```{r}
+mod1 <- modularLM(y ~ x1 + x2, post.var = list(x3 = modular.x3),
+                  data = dat)
+```
+
+Obtain the posterior summary using the function `credibleInterval()` by passing the output from `modularLM()`.
+
+```{r}
+mod1.summary <- credibleInterval(mod1)
+print(mod1.summary)
+```
+
+### Fit with modular interaction terms
+
+If one intends to fit a model with interaction terms involving a modular variable, the posterior samples of the variable corresponding to the interaction term has to be calculated previously and passed into the list `post.var`. For example,
+
+```{r}
+mod2 <- modularLM(y ~ x1 * x2,
+                  post.var = list(x3 = modular.x3,
+                                  `x1:x3` = modular.x3 * dat$x1),
+                  data = dat)
+
+mod2.summary <- credibleInterval(mod2)
+print(mod2.summary)
+```
+
+The model above allows for interaction term both in the modular and non-modular components of the model. We note that both `x1:x2` and `x1:x3` contain zero in their 95\% credible interval.

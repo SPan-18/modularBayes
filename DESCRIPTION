@@ -1,7 +1,7 @@
-Package: modularLM
+Package: modularBayes
 Type: Package
 Version: 0.0.1
-Title: Bayesian Modular Inference for a Linear Model
+Title: Bayesian Modular inference for a linear model
 Authors@R:
     person("Soumyakanti", "Pan", role = c("aut", "cre"),
     email = "span18@ucla.edu", comment = c(ORCID = "0009-0005-9889-7112"))
