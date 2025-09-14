@@ -47,6 +47,9 @@ names(dat) <- c("y", paste("x", 1:(p - 1), sep = ""))
 nS <- 100
 modular.x3 <- matrix(rnorm(length(dat$x3) * nS, mean = rep(dat$x3, nS), sd = 0.01),
                      nrow = length(dat$x3), ncol = nS)
+
+prior.list <- list(beta.Norm = list(rep(0.0, p), diag(1E4, p)),
+                   sigma.sq.IG = c(0.01, 0.01))
 mod1 <- modularLM(y ~ x1 + x2, post.var = list(x3 = modular.x3),
                   data = dat)
 mod1.summary <- credibleInterval(mod1)

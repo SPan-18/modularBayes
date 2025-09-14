@@ -76,8 +76,11 @@ modular.x3 <- matrix(rnorm(length(dat$x3) * nS, mean = rep(dat$x3, nS), sd = 0.1
 We use the function `modularLM()` to fit a modular Bayesian model. The non-modular component of the model is given by a regular formula `y ~ x1 + x2`. The modular variables are passed through a list tagged by the variable names via the argument `post.var`. For example, the following code runs the regression `y ~ x1 + x2 + x3` using posterior samples of `x3`.
 
 ```{r}
+prior.list <- list(beta.Norm = list(rep(0.0, p), diag(1E4, p)),
+                   sigma.sq.IG = c(0.01, 0.01))
+
 mod1 <- modularLM(y ~ x1 + x2, post.var = list(x3 = modular.x3),
-                  data = dat)
+                  data = dat, priors = prior.list)
 ```
 
 Obtain the posterior summary using the function `credibleInterval()` by passing the output from `modularLM()`.
