@@ -1,4 +1,4 @@
-# modularLM
+# modularLM: Modular Bayesian Inference for Linear Models
 
 Implements modular Bayesian inference for linear regression when some predictors
 are themselves outputs of an earlier Bayesian analysis. Instead of plugging in
