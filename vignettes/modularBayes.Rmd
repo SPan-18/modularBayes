@@ -1,8 +1,6 @@
 ---
 title: "modularBayes: Modular Bayesian inference for a linear model"
-output:
-  rmarkdown::html_vignette:
-    mathjax: "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{modularBayes: Modular Bayesian inference for a linear model}
   %\VignetteEngine{knitr::rmarkdown}
@@ -13,7 +11,6 @@ header-includes:
   - \newcommand{\N}{\mathsf{N}}
   - \newcommand{\IG}{\mathsf{IG}}
   - \newcommand{\diag}{\mathrm{diag}}
-link-citations: true
 ---
 
 ```{r, include = FALSE}
@@ -28,7 +25,7 @@ modular Bayesian linear models. The package allows users to incorporate
 posterior samples from external Bayesian analyses (modular components) into a
 unified regression framework.
 
-```{r}
+```{r setup}
 library(modularBayes)
 ```
 
